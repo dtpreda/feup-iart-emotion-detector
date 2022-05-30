@@ -17,7 +17,7 @@ nltk.download('stopwords')
 def preprocessing(statement):
     tt = TweetTokenizer(strip_handles=True, match_phone_numbers=False)
     new_statement = tt.tokenize(statement)
-    new_statement = [x for x in new_statement if len(
+    new_statement = [x.lower() for x in new_statement if len(
         x) > 1 and not x in stopwords.words("english")]
     return new_statement
 
