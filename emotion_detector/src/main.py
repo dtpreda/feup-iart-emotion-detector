@@ -1,6 +1,5 @@
 import pandas as pd
-import nltk
-from nltk import TweetTokenizer
+from nltk import TweetTokenizer, WordNetLemmatizer, download
 from nltk.corpus import stopwords
 from sklearn import preprocessing
 from sklearn.metrics import accuracy_score
@@ -11,14 +10,14 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 train_data = pd.read_csv("emotion_detector/asset/dataset/emotions.csv")
 test_data = pd.read_csv(
     "emotion_detector/asset/dataset/testing_data.csv", encoding="cp1252")
-nltk.download('stopwords')
+download('stopwords')
 
 
 def preprocessing(statement):
     tt = TweetTokenizer(strip_handles=True, match_phone_numbers=False)
+    lemmatizer = WordNetLemmatizer()
     new_statement = tt.tokenize(statement)
-    new_statement = [x.lower() for x in new_statement if len(
-        x) > 1 and not x in stopwords.words("english")]
+    new_statement = [lemmatizer.lemmatize(str.lower(x)) for x in new_statement if len(x) > 1 and x not in stopwords.words("english")]
     return new_statement
 
 
@@ -27,7 +26,7 @@ statements = train_data.drop('Emotion', axis=1).values
 
 statements = [preprocessing(statement[0]) for statement in statements]
 
-vectorizer = TfidfVectorizer(max_features=2500, stop_words=stopwords.words(
+vectorizer = TfidfVectorizer(max_features=1000, stop_words=stopwords.words(
     "english"), analyzer='word', tokenizer=lambda x: x, preprocessor=lambda x: x, token_pattern=None)
 
 processed_statements = vectorizer.fit_transform(statements)
