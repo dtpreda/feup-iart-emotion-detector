@@ -2,7 +2,7 @@ import pandas as pd
 from sklearn.metrics import accuracy_score
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
-from classifiers.generative import random_forest_predict
+from classifiers.generative import random_forest_predict, multi_layer_perceptron_predict
 from classifiers.discriminative import gaussian_naive_bayes_predict, multinomial_naive_bayes_predict
 
 from text_analysis.feature_extraction import tfidf_matrix
@@ -21,7 +21,7 @@ processed_statements = tfidf_matrix(statements)
 x_train, x_test, y_train, y_test = train_test_split(
     processed_statements, emotions, test_size=0.2, random_state=0)
 
-train_predictions = random_forest_predict(
+train_predictions = multi_layer_perceptron_predict(
     x_train, y_train, x_test)
 
 print(
@@ -34,7 +34,7 @@ test_statements = [tokenize(statement[0])
                    for statement in test_statements]
 processed_test_statements = tfidf_matrix(test_statements)
 
-test_predictions = random_forest_predict(
+test_predictions = multi_layer_perceptron_predict(
     x_train, y_train, processed_test_statements)
 
 print(
