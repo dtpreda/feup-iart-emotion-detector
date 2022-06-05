@@ -3,6 +3,7 @@ import pygame_widgets
 from pygame_texteditor import TextEditor
 from time import time, sleep
 from pygame_widgets.button import Button
+from pygame_widgets.dropdown import Dropdown
 
 from view.main_view import MainView
 
@@ -11,11 +12,11 @@ FPS = 30
 
 # Text Area Constants
 STYLE_FILE = "emotion_detector/asset/style/editor.yml"
-FONT_SIZE = 21
+FONT_SIZE = 25
 OFFSET_X = 50
-OFFSET_Y = 300
+OFFSET_Y = 250
 TEXTAREA_WIDTH = 600
-TEXTAREA_HEIGHT = 300
+TEXTAREA_HEIGHT = 250
 
 # Buttons
 COLOR_BUTTON = (190, 190, 190)
@@ -29,11 +30,9 @@ class PygameController:
         self.textarea = self.init_textarea()
         self.main_view = MainView(self.window, self.textarea, self.window_size)
         self.submit_button = self.init_submit_button()
+        self.dropdowns = self.init_dropdowns()
 
     def pygame_loop(self) -> None:
-        self.window = self.init_pygame()
-        self.init_textarea()
-
         start = time()
         while True:
             events = pygame.event.get()
@@ -49,6 +48,11 @@ class PygameController:
             continue
 
         self.quit_pygame()
+
+    def submit(self):
+        print("Training Algorith: " + str(self.dropdowns[0].getSelected()))
+        print("Processing Algorith: " + str(self.dropdowns[1].getSelected()))
+        print("Input: " + self.textarea.get_text_as_string())
 
     def is_running(self, events) -> bool:
         """
@@ -86,7 +90,7 @@ class PygameController:
 
     def init_submit_button(self):
         return Button(
-            self.window, 100, 650, 150, 50,
+            self.window, 100, 550, 150, 50,
             text='SUBMIT',
             fontSize=35,
             margin=20,
@@ -94,5 +98,50 @@ class PygameController:
             hoverColour=HOVER_BUTTON,
             pressedColour=HOVER_BUTTON,
             radius=20,
-            onClick=lambda: print('Click')
+            onClick=self.submit
         )
+
+    def init_dropdowns(self):
+        return (
+            Dropdown(
+                self.window, 700, 250, 250, 50, name='Traning Algorithm',
+                choices=[
+                    'Gaussian Naive Bayes',
+                    'Multinomial Naive Bayes',
+                    'Random Forest',
+                    'Multilayer Perceptron'
+                ],
+                borderRadius=3,
+                colour=pygame.Color(190, 190, 190),
+                values=[0, 1, 2, 3],
+                direction='down',
+                textHAlign='centre',
+                fontSize=25,
+            ),
+            Dropdown(
+                self.window, 1000, 250, 250, 50, name='Processing Algorithm',
+                choices=[
+                    'Gaussian Naive Bayes',
+                    'Multinomial Naive Bayes',
+                    'Random Forest',
+                    'Multilayer Perceptron'
+                ],
+                borderRadius=3,
+                colour=pygame.Color(190, 190, 190),
+                values=[0, 1, 2, 3],
+                direction='down',
+                textHAlign='centre',
+                fontSize=25,
+            )
+        )
+
+
+""", Dropdown(
+                self.window, 120, 10, 100, 50, name='Select Color',
+                choices=[
+                    'Red',
+                    'Blue',
+                    'Yellow',
+                ],
+                borderRadius=3, colour=pygame.Color('green'), values=[1, 2, 'true'], direction='down', textHAlign='left'
+            )"""
