@@ -1,4 +1,4 @@
-import pandas as pd
+"""import pandas as pd
 from sklearn.metrics import accuracy_score
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
@@ -38,4 +38,10 @@ test_predictions = multi_layer_perceptron_predict(
     x_train, y_train, processed_test_statements)
 
 print(
-    f"Accuracy on the test dataset: {accuracy_score(test_emotions, test_predictions)}")
+    f"Accuracy on the test dataset: {accuracy_score(test_emotions, test_predictions)}")"""
+
+from controller.main_controller import MainController
+
+if __name__ == "__main__":
+    main_controller = MainController()
+    main_controller.main_loop()
