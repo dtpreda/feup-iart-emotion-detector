@@ -13,7 +13,7 @@ class MainView:
         self.window_size = window_size
         self.textarea = textarea
 
-    def draw(self, events, emotion, train_accuracy, test_accuracy, duration):
+    def draw(self, events, emotion, train_accuracy, test_accuracy, duration, matrix):
         pressed_keys = pygame.key.get_pressed()
         mouse_x, mouse_y = pygame.mouse.get_pos()
         mouse_pressed = pygame.mouse.get_pressed()
@@ -31,32 +31,31 @@ class MainView:
 
         self.draw_infos(emotion, train_accuracy, test_accuracy, duration)
 
+        if matrix != []:
+            self.draw_matrix(matrix)
+
     def draw_infos(self, emotion, train_accuracy, test_accuracy, duration):
-        font = pygame.font.SysFont(None, FONT_TEXT_SIZE)
-        img = font.render('Duration: ' +
-                          str(duration) + (' seconds' if duration != '' and duration != 'analysing...' else ''), True, TEXT_COLOR)
+        text_font = pygame.font.SysFont(None, FONT_TEXT_SIZE)
+        img = text_font.render('Duration: ' +
+                               str(duration) + (' seconds' if duration != '' and duration != 'analysing...' else ''), True, TEXT_COLOR)
         self.window.blit(
             img, (50, 730))
 
-        font = pygame.font.SysFont(None, FONT_TEXT_SIZE)
-        img = font.render('Accuracy on 20% of the train dataset: ' +
-                          str(train_accuracy), True, TEXT_COLOR)
+        img = text_font.render('Accuracy on 20% of the train dataset: ' +
+                               str(train_accuracy), True, TEXT_COLOR)
         self.window.blit(
             img, (50, 630))
 
-        font = pygame.font.SysFont(None, FONT_TEXT_SIZE)
-        img = font.render("Accuracy of the test dataset: " +
-                          str(test_accuracy), True, TEXT_COLOR)
+        img = text_font.render("Accuracy of the test dataset: " +
+                               str(test_accuracy), True, TEXT_COLOR)
         self.window.blit(
             img, (50, 680))
 
-        font = pygame.font.SysFont(None, FONT_TEXT_SIZE)
-        img = font.render("Emotion: " + emotion, True, TEXT_COLOR)
+        img = text_font.render("Emotion: " + emotion, True, TEXT_COLOR)
         self.window.blit(
             img, (550, 430))
 
-        font = pygame.font.SysFont(None, FONT_TEXT_SIZE)
-        img = font.render("Text Input", True, TEXT_COLOR)
+        img = text_font.render("Text Input", True, TEXT_COLOR)
         self.window.blit(
             img, (50, 200))
 
@@ -70,3 +69,16 @@ class MainView:
             "Detection of emotions in small texts", True, TEXT_COLOR)
         self.window.blit(
             img, ((self.window_size[0] - img.get_size()[0]) / 2, 100))
+
+    def draw_matrix(self, matrix):
+        x = 575
+        y = 520
+        font = pygame.font.SysFont(None, FONT_TEXT_SIZE)
+        img = font.render(
+            "Confusion Matrix of Test Dataset", True, TEXT_COLOR)
+        self.window.blit(img, (x, y))
+        y += 50
+        for i in range(len(matrix)):
+            for j in range(len(matrix[i])):
+                img = font.render(str(matrix[i][j]), True, TEXT_COLOR)
+                self.window.blit(img, (x + i * 50, y + j * 35))

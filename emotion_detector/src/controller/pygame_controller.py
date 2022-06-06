@@ -49,6 +49,7 @@ class PygameController:
         self.train_accuracy = ""
         self.test_accuracy = ""
         self.duration = ""
+        self.matrix = []
 
     def pygame_loop(self) -> None:
         while True:
@@ -59,7 +60,7 @@ class PygameController:
                 break
 
             self.main_view.draw(events, self.emotion,
-                                self.train_accuracy, self.test_accuracy, self.duration)
+                                self.train_accuracy, self.test_accuracy, self.duration, self.matrix)
             pygame_widgets.update(events)
             pygame.display.flip()
 
@@ -71,7 +72,7 @@ class PygameController:
     def force_flip(self):
         events = pygame.event.get()
         self.main_view.draw(events, self.emotion,
-                            self.train_accuracy, self.test_accuracy, self.duration)
+                            self.train_accuracy, self.test_accuracy, self.duration, self.matrix)
         pygame_widgets.update(events)
         pygame.display.flip()
 
@@ -110,13 +111,13 @@ class PygameController:
             self.animate_warning("Please select the desired dataset")
             return
 
-        self.train_accuracy = self.test_accuracy = 'analysing...'
-        self.duration = 'analysing...'
+        self.duration = self.train_accuracy = self.test_accuracy = 'analysing...'
+        self.matrix = []
         self.force_flip()
 
         algorithms = self.get_algorithm(self.dropdowns[0].getSelected())
 
-        self.train_accuracy, self.test_accuracy, self.duration = predict_dataset(
+        self.train_accuracy, self.test_accuracy, self.duration, self.matrix = predict_dataset(
             algorithms[0], algorithms[1],
             self.get_dataset_dir(self.dropdowns[1].getSelected()),
             self.toggles[0][1].getValue(),
