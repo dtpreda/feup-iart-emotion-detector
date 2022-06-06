@@ -19,6 +19,10 @@ nltk.download('averaged_perceptron_tagger', quiet=True)
 
 def tokenize(statement: str, language: str = "english", *, rm_stop_words=False,
              lowercase=False, do_lemmatize=False, rm_single_chars=False, with_bigram=False, with_pos_tag=False):
+    """
+    Tokenizes a single statement (sentence, or in the context of the problem, a tweet).
+    May apply other transformations, such as lowercasing, if the corresponding parameter is set to true.
+    """
     # Use TweetTokenizer to tokenize while preserving hashtags
     statement = clean_html(statement)
     tt = nltk.tokenize.TweetTokenizer(strip_handles=True,
@@ -52,8 +56,14 @@ def tokenize(statement: str, language: str = "english", *, rm_stop_words=False,
 
 
 def bigram(tokenized_sentence: list[str]):
+    """
+    Applies bigram to a tokenized sentence
+    """
     return list(nltk.bigrams(tokenized_sentence))
 
 
 def pos_tag(tokenized_sentence: list[str]):
+    """
+    Applies post-tag to a tokenized sentence
+    """
     return nltk.pos_tag(tokenized_sentence)

@@ -1,5 +1,8 @@
-from controller.main_controller import MainController
+from controller.pygame_controller import PygameController
+from helpers.utils import block_print, enable_print
 
 if __name__ == "__main__":
-    main_controller = MainController()
-    main_controller.main_loop()
+    block_print()
+    pygame_controller = PygameController()
+    pygame_controller.pygame_loop()
+    enable_print()

@@ -35,6 +35,28 @@ HOVER_DROPDOWN = (150, 150, 150)
 
 class PygameController:
     def __init__(self) -> None:
+        """
+        Constructor of MainView class
+        Properties:
+            window (Surface): pygame window for display
+            window_size (tuple): tuple with width and height of pygame window
+            textarea (TextEditor): textarea where user input text
+            main_view (MainView): view to draw in pygame window
+            submit_button (Button): button to submit text input
+            dataset_button (Button): button to train and get dataset results
+            dropdowns (Tuple): tuple of all dropdowns to display in pygame window
+            toggles (List): list of toggles to display in pygame window
+            animation (Button): button where the animation is made
+            emotion (str): detected emotion in text input
+            train_accuracy (str): train accuracy of emotion detection
+            test_accuracy (str): test accuracy of emotion detection
+            train_precision (str): train precision of emotion detection
+            test_precision (str): test precision of emotion detection
+            train_recall (str): train recall of emotion detection
+            test_recall (str): test recall of emotion detection
+            duration (str): duration of detection execution
+            matrix (List): confusion matrix
+        """
         self.window_size = WINDOW_SIZE
         self.window = self.init_pygame()
         self.textarea = self.init_textarea()
@@ -56,6 +78,7 @@ class PygameController:
         self.matrix = []
 
     def pygame_loop(self) -> None:
+        '''Pygame main loop'''
         while True:
             start = time()
             events = pygame.event.get()
@@ -78,6 +101,7 @@ class PygameController:
         self.quit_pygame()
 
     def force_flip(self):
+        '''Force pygame to draw and refresh screen'''
         events = pygame.event.get()
         self.main_view.draw(events, self.emotion,
                             self.train_accuracy, self.test_accuracy,
@@ -89,6 +113,7 @@ class PygameController:
         pygame.display.flip()
 
     def evaluate_text(self):
+        '''Detects errors and call emotion detection algorithms'''
         if self.dropdowns[0].getSelected() == None:
             self.animate_warning("Please select the desired algorithm")
             return
@@ -115,6 +140,7 @@ class PygameController:
             self.toggles[5][1].getValue())
 
     def evaluate_dataset(self):
+        '''Detects errors and call emotion detection algorithms'''
         if self.dropdowns[0].getSelected() == None:
             self.animate_warning("Please select the desired algorithm")
             return
@@ -169,6 +195,7 @@ class PygameController:
         pygame.quit()
 
     def init_textarea(self):
+        '''Initialize textarea'''
         textarea = TextEditor(
             OFFSET_X, OFFSET_Y, TEXTAREA_WIDTH, TEXTAREA_HEIGHT, self.window)
         textarea.set_font_size(FONT_SIZE)
@@ -177,6 +204,7 @@ class PygameController:
         return textarea
 
     def init_evaluate_button(self):
+        '''Initialize submit button'''
         return Button(
             self.window, 150, 415, 150, 50,
             text='Evaluate Text',
@@ -190,6 +218,7 @@ class PygameController:
         )
 
     def init_dataset_button(self):
+        '''Initialize dataset button'''
         return Button(
             self.window, 50, 550, 200, 50,
             text='Evaluate Test Dataset',
@@ -203,6 +232,7 @@ class PygameController:
         )
 
     def init_dropdowns(self):
+        '''Initialize all dropdowns'''
         return (Dropdown(
             self.window, 1000, 200, 250, 50, name='Algorithm   v',
             choices=[
@@ -238,6 +268,7 @@ class PygameController:
         ))
 
     def init_toggles(self):
+        '''Initialize all toggles and the associated buttons'''
         return [
             (self.init_toggle_button("Remove Stop Words", 1000, 350),
              Toggle(self.window, 1225, 367, 30, 15)),
@@ -254,6 +285,7 @@ class PygameController:
         ]
 
     def init_toggle_button(self, button_text, x, y):
+        '''Initialize button associated to a toggle'''
         return Button(
             self.window, x, y, 200, 50,
             text=button_text,
@@ -266,6 +298,7 @@ class PygameController:
         )
 
     def init_animation(self):
+        '''Initialize button to make animations'''
         return Button(
             self.window, 300, 700, 200, 50,
             text="Warning",
@@ -279,6 +312,7 @@ class PygameController:
         )
 
     def animate_warning(self, warning_text):
+        '''Start animation by creating a new thread'''
         self.animation = Button(
             self.window, 450, 150, 400, 50,
             text=warning_text,
@@ -295,11 +329,13 @@ class PygameController:
         t.start()
 
     def anim(self):
+        '''Animation function'''
         self.animation.show()
         sleep(2)
         self.animation.hide()
 
     def get_algorithm(self, value):
+        '''Get algorithms to detect emotions'''
         if (value == 0):
             return (gaussian_naive_bayes_fit, gaussian_naive_bayes_predict)
         if (value == 1):
@@ -310,6 +346,7 @@ class PygameController:
             return (multi_layer_perceptron_fit, multi_layer_perceptron_predict)
 
     def get_dataset_dir(self, value):
+        '''Get path to the wanted dataset'''
         if (value == 0):
             return "emotion_detector/dataset/twitter/"
         if (value == 1):
