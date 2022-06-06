@@ -1,6 +1,8 @@
-pytest
 numpy
 matplotlib
 pandas
 nltk
 sklearn
+pygame
+pygame-widgets
+pygame-texteditor
