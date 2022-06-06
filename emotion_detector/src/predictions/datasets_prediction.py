@@ -1,8 +1,9 @@
 from time import time
 import pandas as pd
+import sklearn
 from text_analysis.preprocess import tokenize
 from text_analysis.feature_extraction import tfidf_learn_vocabulary, tfidf_matrix
-from sklearn.metrics import accuracy_score, precision_score, recall_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score, confusion_matrix
 from sklearn.model_selection import train_test_split
 
 
@@ -43,7 +44,8 @@ def predict_dataset(fit_algorithm, predict_algorithm, dataset_dir, rm_stop_words
             round(accuracy_score(test_emotions, test_predictions), 3),
             round(precision_score(y_test, train_predictions, average="micro"), 3),
             round(precision_score(test_emotions,
-                  test_predictions, average="micro"), 3),
+                                  test_predictions, average="micro"), 3),
             round(recall_score(y_test, train_predictions, average="micro"), 3),
             round(recall_score(test_emotions, test_predictions, average="micro"), 3),
-            str(round(time() - start, 3)))
+            str(round(time() - start, 3)),
+            confusion_matrix(test_emotions, test_predictions))

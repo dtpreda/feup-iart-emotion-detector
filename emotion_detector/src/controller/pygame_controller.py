@@ -53,6 +53,7 @@ class PygameController:
         self.train_recall = ""
         self.test_recall = ""
         self.duration = ""
+        self.matrix = []
 
     def pygame_loop(self) -> None:
         while True:
@@ -66,7 +67,8 @@ class PygameController:
                                 self.train_accuracy, self.test_accuracy,
                                 self.train_precision, self.test_precision,
                                 self.train_recall, self.test_recall,
-                                self.duration)
+                                self.duration, self.matrix)
+
             pygame_widgets.update(events)
             pygame.display.flip()
 
@@ -81,7 +83,8 @@ class PygameController:
                             self.train_accuracy, self.test_accuracy,
                             self.train_precision, self.test_precision,
                             self.train_recall, self.test_recall,
-                            self.duration)
+                            self.duration, self.matrix)
+
         pygame_widgets.update(events)
         pygame.display.flip()
 
@@ -96,7 +99,7 @@ class PygameController:
 
         input = remove_empty_lines(self.textarea.get_text_as_string())
 
-        self.emotion = 'analysing...'
+        self.emotion = '...'
         self.force_flip()
 
         algorithms = self.get_algorithm(self.dropdowns[0].getSelected())
@@ -124,11 +127,12 @@ class PygameController:
         self.train_precision = self.test_precision = '...'
         self.train_recall = self.test_recall = '...'
         self.duration = '...'
+        self.matrix = []
         self.force_flip()
 
         algorithms = self.get_algorithm(self.dropdowns[0].getSelected())
 
-        self.train_accuracy, self.test_accuracy, self.train_precision, self.test_precision,                                 self.train_recall, self.test_recall, self.duration = predict_dataset(
+        self.train_accuracy, self.test_accuracy, self.train_precision, self.test_precision, self.train_recall, self.test_recall, self.duration, self.matrix = predict_dataset(
             algorithms[0], algorithms[1],
             self.get_dataset_dir(self.dropdowns[1].getSelected()),
             self.toggles[0][1].getValue(),
@@ -143,7 +147,7 @@ class PygameController:
         Check if does not exist at least one of the following events: press ESQ or close the window
 
         Return:
-            False if the events exist, True otherwise 
+            False if the events exist, True otherwise
         """
         for event in events:
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
@@ -152,7 +156,7 @@ class PygameController:
 
     def init_pygame(self) -> None:
         """
-        Pygame and screen initialization 
+        Pygame and screen initialization
 
         Return:
             Pygame Surface to display
