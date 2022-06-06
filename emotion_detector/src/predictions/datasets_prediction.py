@@ -1,3 +1,4 @@
+from time import time
 import pandas as pd
 from text_analysis.preprocess import tokenize
 from text_analysis.feature_extraction import tfidf_learn_vocabulary, tfidf_matrix
@@ -10,6 +11,8 @@ from classifiers.discriminative import gaussian_naive_bayes_predict, multinomial
 
 def predict_dataset(algorithm, dataset_dir, rm_stop_words,
                     lowercase, lemmatize, rm_single_chars, with_bigram, with_pos_tag):
+
+    start = time()
 
     train_data = pd.read_csv(dataset_dir + "train.csv")
     test_data = pd.read_csv(dataset_dir + "test.csv", encoding="cp1252")
@@ -45,4 +48,4 @@ def predict_dataset(algorithm, dataset_dir, rm_stop_words,
     # print(
     #    f"Accuracy on the test dataset: {accuracy_score(test_emotions, test_predictions)}")
 
-    return (accuracy_score(y_test, train_predictions), accuracy_score(test_emotions, test_predictions))
+    return (accuracy_score(y_test, train_predictions), accuracy_score(test_emotions, test_predictions), str(time() - start))

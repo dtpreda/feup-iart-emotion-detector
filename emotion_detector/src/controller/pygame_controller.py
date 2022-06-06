@@ -48,17 +48,18 @@ class PygameController:
         self.emotion = ""
         self.train_accuracy = ""
         self.test_accuracy = ""
+        self.duration = ""
 
     def pygame_loop(self) -> None:
-        start = time()
         while True:
+            start = time()
             events = pygame.event.get()
 
             if not self.is_running(events):
                 break
 
             self.main_view.draw(events, self.emotion,
-                                self.train_accuracy, self.test_accuracy)
+                                self.train_accuracy, self.test_accuracy, self.duration)
             pygame_widgets.update(events)
             pygame.display.flip()
 
@@ -70,7 +71,7 @@ class PygameController:
     def force_flip(self):
         events = pygame.event.get()
         self.main_view.draw(events, self.emotion,
-                            self.train_accuracy, self.test_accuracy)
+                            self.train_accuracy, self.test_accuracy, self.duration)
         pygame_widgets.update(events)
         pygame.display.flip()
 
@@ -98,16 +99,6 @@ class PygameController:
             self.toggles[4][1].getValue(),
             self.toggles[5][1].getValue())
 
-        print("Input: " + input)
-        print("Algorithm: " + str(self.dropdowns[0].getSelected()))
-        print("Dataset: " + str(self.dropdowns[1].getSelected()))
-        print("Remove Chars: " + str(self.toggles[0][1].getValue()))
-        print("Lowercase: " + str(self.toggles[1][1].getValue()))
-        print("Lemmatize: " + str(self.toggles[2][1].getValue()))
-        print("Remove Single Chars: " + str(self.toggles[3][1].getValue()))
-        print("Bigram: " + str(self.toggles[4][1].getValue()))
-        print("PosTag: " + str(self.toggles[5][1].getValue()))
-
     def evaluate_dataset(self):
         if self.dropdowns[0].getSelected() == None:
             self.animate_warning("Please select the desired algorithm")
@@ -118,9 +109,10 @@ class PygameController:
             return
 
         self.train_accuracy = self.test_accuracy = 'analysing...'
+        self.duration = 'analysing...'
         self.force_flip()
 
-        self.train_accuracy, self.test_accuracy = predict_dataset(
+        self.train_accuracy, self.test_accuracy, self.duration = predict_dataset(
             self.get_algorithm(self.dropdowns[0].getSelected()),
             self.get_dataset_dir(self.dropdowns[1].getSelected()),
             self.toggles[0][1].getValue(),
