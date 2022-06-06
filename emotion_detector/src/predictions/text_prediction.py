@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split
 
 
 def predict_text_emotion(data, algorithm):
-    train_data = pd.read_csv("emotion_detector/asset/dataset/emotions.csv")
+    train_data = pd.read_csv("emotion_detector/dataset/twitter/train.csv")
 
     emotions = train_data.Emotion.values
     statements = train_data.drop('Emotion', axis=1).values
