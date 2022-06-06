@@ -13,7 +13,7 @@ class MainView:
         self.window_size = window_size
         self.textarea = textarea
 
-    def draw(self, events, emotion):
+    def draw(self, events, emotion, train_accuracy, test_accuracy):
         pressed_keys = pygame.key.get_pressed()
         mouse_x, mouse_y = pygame.mouse.get_pos()
         mouse_pressed = pygame.mouse.get_pressed()
@@ -24,20 +24,35 @@ class MainView:
             events, pressed_keys, mouse_x, mouse_y, mouse_pressed)
 
         pygame.draw.line(self.window, (150, 150, 150),
-                         (50, 550), (650, 550), 4)
+                         (50, 500), (950, 500), 4)
 
-        self.draw_infos(emotion)
+        pygame.draw.line(self.window, (150, 150, 150),
+                         (950, 200), (950, 750), 4)
 
-    def draw_infos(self, emotion):
+        self.draw_infos(emotion, train_accuracy, test_accuracy)
+
+    def draw_infos(self, emotion, train_accuracy, test_accuracy):
+        font = pygame.font.SysFont(None, FONT_TEXT_SIZE)
+        img = font.render('Accuracy on 20% of the train dataset: ' +
+                          str(train_accuracy), True, TEXT_COLOR)
+        self.window.blit(
+            img, (50, 650))
+
+        font = pygame.font.SysFont(None, FONT_TEXT_SIZE)
+        img = font.render("Accuracy of the test dataset: " +
+                          str(test_accuracy), True, TEXT_COLOR)
+        self.window.blit(
+            img, (50, 720))
+
         font = pygame.font.SysFont(None, FONT_TEXT_SIZE)
         img = font.render("Emotion: " + emotion, True, TEXT_COLOR)
         self.window.blit(
-            img, (400, 480))
+            img, (550, 430))
 
         font = pygame.font.SysFont(None, FONT_TEXT_SIZE)
         img = font.render("Text Input", True, TEXT_COLOR)
         self.window.blit(
-            img, (50, 250))
+            img, (50, 200))
 
         font = pygame.font.SysFont(None, FONT_TITLE_SIZE)
         img = font.render("Natural Language Processing", True, TEXT_COLOR)

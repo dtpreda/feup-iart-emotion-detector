@@ -7,6 +7,7 @@ from pygame_widgets.button import Button
 from pygame_widgets.dropdown import Dropdown
 from pygame_widgets.toggle import Toggle
 from predictions.text_prediction import predict_text_emotion
+from predictions.datasets_prediction import predict_dataset
 
 from classifiers.generative import random_forest_predict, multi_layer_perceptron_predict
 from classifiers.discriminative import gaussian_naive_bayes_predict, multinomial_naive_bayes_predict
@@ -22,8 +23,8 @@ BG_COLOR = (252, 252, 220)
 STYLE_FILE = "emotion_detector/asset/style/editor.yml"
 FONT_SIZE = 25
 OFFSET_X = 50
-OFFSET_Y = 280
-TEXTAREA_WIDTH = 600
+OFFSET_Y = 230
+TEXTAREA_WIDTH = 850
 TEXTAREA_HEIGHT = 150
 
 # Buttons
@@ -38,12 +39,15 @@ class PygameController:
         self.window = self.init_pygame()
         self.textarea = self.init_textarea()
         self.main_view = MainView(self.window, self.textarea, self.window_size)
-        self.submit_button = self.init_submit_button()
+        self.submit_button = self.init_evaluate_button()
+        self.dataset_button = self.init_dataset_button()
         self.dropdowns = self.init_dropdowns()
         self.toggles = self.init_toggles()
         self.animation = self.init_animation()
         self.animation.hide()
         self.emotion = ""
+        self.train_accuracy = ""
+        self.test_accuracy = ""
 
     def pygame_loop(self) -> None:
         start = time()
@@ -53,7 +57,8 @@ class PygameController:
             if not self.is_running(events):
                 break
 
-            self.main_view.draw(events, self.emotion)
+            self.main_view.draw(events, self.emotion,
+                                self.train_accuracy, self.test_accuracy)
             pygame_widgets.update(events)
             pygame.display.flip()
 
@@ -62,7 +67,7 @@ class PygameController:
 
         self.quit_pygame()
 
-    def submit(self):
+    def evaluate_text(self):
         if self.dropdowns[0].getSelected() == None:
             self.animate_warning("Please select the desired algorithm")
             return
@@ -75,7 +80,8 @@ class PygameController:
 
         self.emotion = 'Analysing'
         events = pygame.event.get()
-        self.main_view.draw(events, self.emotion)
+        self.main_view.draw(events, self.emotion,
+                            self.train_accuracy, self.test_accuracy)
         pygame_widgets.update(events)
         pygame.display.flip()
 
@@ -84,12 +90,29 @@ class PygameController:
         print("Input: " + input)
         print("Algorithm: " + str(self.dropdowns[0].getSelected()))
         print("Dataset: " + str(self.dropdowns[1].getSelected()))
-        print("Remove Chars: " + str(self.toggles[0][1].getValue()))
-        print("Lowercase: " + str(self.toggles[1][1].getValue()))
-        print("Lemmatize: " + str(self.toggles[2][1].getValue()))
-        print("Remove Single Chars: " + str(self.toggles[3][1].getValue()))
-        print("Bigram: " + str(self.toggles[4][1].getValue()))
-        print("PosTag: " + str(self.toggles[5][1].getValue()))
+
+        print("Remove Single Chars: " + str(self.toggles[0][1].getValue()))
+        print("Bigram: " + str(self.toggles[1][1].getValue()))
+        print("PosTag: " + str(self.toggles[2][1].getValue()))
+
+        print("Remove Chars: " + str(self.toggles[3][1].getValue()))
+        print("Lowercase: " + str(self.toggles[4][1].getValue()))
+        print("Lemmatize: " + str(self.toggles[5][1].getValue()))
+
+    def evaluate_dataset(self):
+        if self.dropdowns[0].getSelected() == None:
+            self.animate_warning("Please select the desired algorithm")
+            return
+
+        self.train_accuracy = self.test_accuracy = 'Analysing'
+        events = pygame.event.get()
+        self.main_view.draw(events, self.emotion,
+                            self.train_accuracy, self.test_accuracy)
+        pygame_widgets.update(events)
+        pygame.display.flip()
+
+        self.train_accuracy, self.test_accuracy = predict_dataset(
+            random_forest_predict)
 
     def is_running(self, events) -> bool:
         """
@@ -125,9 +148,9 @@ class PygameController:
         textarea.set_colorscheme_from_yaml(STYLE_FILE)
         return textarea
 
-    def init_submit_button(self):
+    def init_evaluate_button(self):
         return Button(
-            self.window, 150, 465, 150, 50,
+            self.window, 150, 415, 150, 50,
             text='Evaluate',
             fontSize=30,
             margin=20,
@@ -135,12 +158,25 @@ class PygameController:
             hoverColour=HOVER_BUTTON,
             pressedColour=HOVER_BUTTON,
             radius=20,
-            onClick=self.submit
+            onClick=self.evaluate_text
+        )
+
+    def init_dataset_button(self):
+        return Button(
+            self.window, 50, 550, 200, 50,
+            text='Evaluate Dataset',
+            fontSize=25,
+            margin=20,
+            inactiveColour=COLOR_BUTTON,
+            hoverColour=HOVER_BUTTON,
+            pressedColour=HOVER_BUTTON,
+            radius=20,
+            onClick=self.evaluate_dataset
         )
 
     def init_dropdowns(self):
         return (Dropdown(
-            self.window, 700, 280, 250, 50, name='Algorithm   v',
+            self.window, 1000, 200, 250, 50, name='Algorithm   v',
             choices=[
                 'Gaussian Naive Bayes',
                 'Multinomial Naive Bayes',
@@ -157,7 +193,7 @@ class PygameController:
             textHAlign='centre',
             fontSize=25,
         ), Dropdown(
-            self.window, 1000, 280, 250, 50, name='Train Dataset   v',
+            self.window, 1000, 275, 250, 50, name='Train Dataset   v',
             choices=[
                 'Dataset 1',
                 'Dataset 2',
@@ -176,18 +212,18 @@ class PygameController:
 
     def init_toggles(self):
         return [
-            (self.init_toggle_button("Remove Stop Words", 700, 400),
-             Toggle(self.window, 925, 417, 30, 15)),
-            (self.init_toggle_button("Lowercase", 700, 475),
-             Toggle(self.window, 925, 492, 30, 15)),
-            (self.init_toggle_button("Lemmatize", 700, 550),
-             Toggle(self.window, 925, 567, 30, 15)),
-            (self.init_toggle_button("Remove Single Chars", 1000, 400),
-             Toggle(self.window, 1225, 417, 30, 15)),
-            (self.init_toggle_button("Bigram", 1000, 475),
-             Toggle(self.window, 1225, 492, 30, 15)),
-            (self.init_toggle_button("PosTag", 1000, 550),
-             Toggle(self.window, 1225, 567, 30, 15))
+            (self.init_toggle_button("Remove Single Chars", 1000, 350),
+             Toggle(self.window, 1225, 367, 30, 15)),
+            (self.init_toggle_button("Bigram", 1000, 425),
+             Toggle(self.window, 1225, 442, 30, 15)),
+            (self.init_toggle_button("PosTag", 1000, 500),
+             Toggle(self.window, 1225, 517, 30, 15)),
+            (self.init_toggle_button("Remove Stop Words", 1000, 575),
+             Toggle(self.window, 1225, 592, 30, 15)),
+            (self.init_toggle_button("Lowercase", 1000, 650),
+             Toggle(self.window, 1225, 667, 30, 15)),
+            (self.init_toggle_button("Lemmatize", 1000, 725),
+             Toggle(self.window, 1225, 742, 30, 15))
         ]
 
     def init_toggle_button(self, button_text, x, y):
@@ -212,18 +248,20 @@ class PygameController:
             hoverColour=(200, 0, 0),
             pressedColour=(200, 0, 0),
             radius=20,
+            textColour=(255, 255, 255)
         )
 
     def animate_warning(self, warning_text):
         self.animation = Button(
-            self.window, 450, 700, 400, 50,
+            self.window, 450, 150, 400, 50,
             text=warning_text,
             fontSize=25,
             margin=20,
-            inactiveColour=(255, 0, 0),
+            inactiveColour=(220, 0, 0),
             hoverColour=(200, 0, 0),
             pressedColour=(200, 0, 0),
             radius=20,
+            textColour=(255, 255, 255)
         )
 
         t = Thread(target=self.anim, args=())
