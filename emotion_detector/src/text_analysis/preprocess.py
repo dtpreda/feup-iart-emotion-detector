@@ -14,11 +14,11 @@ def clean_html(raw_html):
 nltk.download('stopwords', quiet=True)
 nltk.download('wordnet', quiet=True)
 nltk.download('omw-1.4', quiet=True)
-nltk.download('vader_lexicon', quiet=True)
+nltk.download('averaged_perceptron_tagger')
 
 
 def tokenize(statement: str, language: str = "english", *, rm_stop_words=False,
-             lowercase=False, lemmatize=False, rm_single_chars=False, with_bigram=False, with_pos_tag=False):
+             lowercase=False, do_lemmatize=False, rm_single_chars=False, with_bigram=False, with_pos_tag=False):
     # Use TweetTokenizer to tokenize while preserving hashtags
     statement = clean_html(statement)
     tt = nltk.tokenize.TweetTokenizer(strip_handles=True,
@@ -35,7 +35,7 @@ def tokenize(statement: str, language: str = "english", *, rm_stop_words=False,
     if lowercase:
         tokens = [t.lower() for t in tokens]
 
-    if lemmatize:
+    if do_lemmatize:
         lemmatizer = nltk.WordNetLemmatizer()
         tokens = [lemmatizer.lemmatize(t) for t in tokens]
 

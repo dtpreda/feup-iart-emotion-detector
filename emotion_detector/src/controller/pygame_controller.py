@@ -85,22 +85,28 @@ class PygameController:
 
         input = removeEmptyLines(self.textarea.get_text_as_string())
 
-        self.emotion = 'Analysing'
+        self.emotion = 'analysing...'
         self.force_flip()
 
-        self.emotion = predict_text_emotion(input, random_forest_predict)
+        self.emotion = predict_text_emotion(
+            input, self.get_algorithm(self.dropdowns[0].getSelected()),
+            self.get_dataset_dir(self.dropdowns[1].getSelected()),
+            self.toggles[0][1].getValue(),
+            self.toggles[1][1].getValue(),
+            self.toggles[2][1].getValue(),
+            self.toggles[3][1].getValue(),
+            self.toggles[4][1].getValue(),
+            self.toggles[5][1].getValue())
 
         print("Input: " + input)
         print("Algorithm: " + str(self.dropdowns[0].getSelected()))
         print("Dataset: " + str(self.dropdowns[1].getSelected()))
-
-        print("Remove Single Chars: " + str(self.toggles[0][1].getValue()))
-        print("Bigram: " + str(self.toggles[1][1].getValue()))
-        print("PosTag: " + str(self.toggles[2][1].getValue()))
-
-        print("Remove Chars: " + str(self.toggles[3][1].getValue()))
-        print("Lowercase: " + str(self.toggles[4][1].getValue()))
-        print("Lemmatize: " + str(self.toggles[5][1].getValue()))
+        print("Remove Chars: " + str(self.toggles[0][1].getValue()))
+        print("Lowercase: " + str(self.toggles[1][1].getValue()))
+        print("Lemmatize: " + str(self.toggles[2][1].getValue()))
+        print("Remove Single Chars: " + str(self.toggles[3][1].getValue()))
+        print("Bigram: " + str(self.toggles[4][1].getValue()))
+        print("PosTag: " + str(self.toggles[5][1].getValue()))
 
     def evaluate_dataset(self):
         if self.dropdowns[0].getSelected() == None:
@@ -111,11 +117,18 @@ class PygameController:
             self.animate_warning("Please select the desired dataset")
             return
 
-        self.train_accuracy = self.test_accuracy = 'Analysing'
+        self.train_accuracy = self.test_accuracy = 'analysing...'
         self.force_flip()
 
         self.train_accuracy, self.test_accuracy = predict_dataset(
-            self.get_algorithm(self.dropdowns[0].getSelected()), self.get_dataset_dir(self.dropdowns[1].getSelected()))
+            self.get_algorithm(self.dropdowns[0].getSelected()),
+            self.get_dataset_dir(self.dropdowns[1].getSelected()),
+            self.toggles[0][1].getValue(),
+            self.toggles[1][1].getValue(),
+            self.toggles[2][1].getValue(),
+            self.toggles[3][1].getValue(),
+            self.toggles[4][1].getValue(),
+            self.toggles[5][1].getValue())
 
     def is_running(self, events) -> bool:
         """
@@ -200,14 +213,13 @@ class PygameController:
             choices=[
                 'Dataset 1',
                 'Dataset 2',
-                'Dataset 3',
             ],
             borderRadius=3,
             colour=pygame.Color(190, 190, 190),
             inactiveColour=COLOR_BUTTON,
             hoverColour=HOVER_DROPDOWN,
             pressedColour=HOVER_DROPDOWN,
-            values=[0, 1, 2],
+            values=[0, 1],
             direction='down',
             textHAlign='centre',
             fontSize=25,
@@ -215,17 +227,17 @@ class PygameController:
 
     def init_toggles(self):
         return [
-            (self.init_toggle_button("Remove Single Chars", 1000, 350),
+            (self.init_toggle_button("Remove Stop Words", 1000, 350),
              Toggle(self.window, 1225, 367, 30, 15)),
-            (self.init_toggle_button("Bigram", 1000, 425),
+            (self.init_toggle_button("Lowercase", 1000, 425),
              Toggle(self.window, 1225, 442, 30, 15)),
-            (self.init_toggle_button("PosTag", 1000, 500),
+            (self.init_toggle_button("Lemmatize", 1000, 500),
              Toggle(self.window, 1225, 517, 30, 15)),
-            (self.init_toggle_button("Remove Stop Words", 1000, 575),
+            (self.init_toggle_button("Remove Single Chars", 1000, 575),
              Toggle(self.window, 1225, 592, 30, 15)),
-            (self.init_toggle_button("Lowercase", 1000, 650),
+            (self.init_toggle_button("Bigram", 1000, 650),
              Toggle(self.window, 1225, 667, 30, 15)),
-            (self.init_toggle_button("Lemmatize", 1000, 725),
+            (self.init_toggle_button("PosTag", 1000, 725),
              Toggle(self.window, 1225, 742, 30, 15))
         ]
 
@@ -290,5 +302,3 @@ class PygameController:
             return "emotion_detector/dataset/twitter/"
         if (value == 1):
             return "emotion_detector/dataset/twitter2/"
-        if (value == 2):
-            return "emotion_detector/dataset/imdb/"

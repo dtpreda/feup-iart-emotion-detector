@@ -8,7 +8,8 @@ from classifiers.generative import random_forest_predict, multi_layer_perceptron
 from classifiers.discriminative import gaussian_naive_bayes_predict, multinomial_naive_bayes_predict
 
 
-def predict_dataset(algorithm, dataset_dir):
+def predict_dataset(algorithm, dataset_dir, rm_stop_words,
+                    lowercase, lemmatize, rm_single_chars, with_bigram, with_pos_tag):
 
     train_data = pd.read_csv(dataset_dir + "train.csv")
     test_data = pd.read_csv(dataset_dir + "test.csv", encoding="cp1252")
@@ -16,7 +17,8 @@ def predict_dataset(algorithm, dataset_dir):
     emotions = train_data.Emotion.values
     statements = train_data.drop('Emotion', axis=1).values
 
-    statements = [tokenize(statement[0]) for statement in statements]
+    statements = [tokenize(statement[0], rm_stop_words=rm_stop_words,
+                           lowercase=lowercase, do_lemmatize=lemmatize, rm_single_chars=rm_single_chars, with_bigram=with_bigram, with_pos_tag=with_pos_tag) for statement in statements]
     vectorizer = tfidf_learn_vocabulary(statements)
     processed_statements = tfidf_matrix(vectorizer, statements)
 
@@ -32,7 +34,8 @@ def predict_dataset(algorithm, dataset_dir):
     test_emotions = test_data.Emotion.values
     test_statements = test_data.drop('Emotion', axis=1).values
 
-    test_statements = [tokenize(statement[0])
+    test_statements = [tokenize(statement[0], rm_stop_words=rm_stop_words,
+                                lowercase=lowercase, do_lemmatize=lemmatize, rm_single_chars=rm_single_chars, with_bigram=with_bigram, with_pos_tag=with_pos_tag)
                        for statement in test_statements]
     processed_test_statements = tfidf_matrix(vectorizer, test_statements)
 
