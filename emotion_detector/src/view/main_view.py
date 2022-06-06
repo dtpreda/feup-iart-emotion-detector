@@ -37,7 +37,7 @@ class MainView:
                    test_accuracy, test_precision, test_recall, duration, matrix):
         text_font = pygame.font.SysFont(None, FONT_TEXT_SIZE)
         img = text_font.render('Duration: ' +
-                               str(duration) + (' seconds' if duration != '' and duration != 'analysing...' else ''), True, TEXT_COLOR)
+                               str(duration) + ' seconds', True, TEXT_COLOR)
         self.window.blit(
             img, (50, 730))
 

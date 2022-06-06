@@ -45,14 +45,14 @@ class PygameController:
         self.toggles = self.init_toggles()
         self.animation = self.init_animation()
         self.animation.hide()
-        self.emotion = ""
-        self.train_accuracy = ""
-        self.test_accuracy = ""
-        self.train_precision = ""
-        self.test_precision = ""
-        self.train_recall = ""
-        self.test_recall = ""
-        self.duration = ""
+        self.emotion = "?"
+        self.train_accuracy = "?"
+        self.test_accuracy = "?"
+        self.train_precision = "?"
+        self.test_precision = "?"
+        self.train_recall = "?"
+        self.test_recall = "?"
+        self.duration = "?"
         self.matrix = []
 
     def pygame_loop(self) -> None:
@@ -99,7 +99,7 @@ class PygameController:
 
         input = remove_empty_lines(self.textarea.get_text_as_string())
 
-        self.emotion = '...'
+        self.emotion = 'analysing, might take a while...'
         self.force_flip()
 
         algorithms = self.get_algorithm(self.dropdowns[0].getSelected())
@@ -179,7 +179,7 @@ class PygameController:
     def init_evaluate_button(self):
         return Button(
             self.window, 150, 415, 150, 50,
-            text='Evaluate',
+            text='Evaluate Text',
             fontSize=30,
             margin=20,
             inactiveColour=COLOR_BUTTON,
@@ -192,7 +192,7 @@ class PygameController:
     def init_dataset_button(self):
         return Button(
             self.window, 50, 550, 200, 50,
-            text='Evaluate Dataset',
+            text='Evaluate Test Dataset',
             fontSize=25,
             margin=20,
             inactiveColour=COLOR_BUTTON,
@@ -223,8 +223,8 @@ class PygameController:
         ), Dropdown(
             self.window, 1000, 275, 250, 50, name='Train Dataset   v',
             choices=[
-                'Dataset 1',
-                'Dataset 2',
+                'Small dataset',
+                'Large dataset',
             ],
             borderRadius=3,
             colour=pygame.Color(190, 190, 190),

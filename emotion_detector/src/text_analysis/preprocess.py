@@ -14,7 +14,7 @@ def clean_html(raw_html):
 nltk.download('stopwords', quiet=True)
 nltk.download('wordnet', quiet=True)
 nltk.download('omw-1.4', quiet=True)
-nltk.download('averaged_perceptron_tagger')
+nltk.download('averaged_perceptron_tagger', quiet=True)
 
 
 def tokenize(statement: str, language: str = "english", *, rm_stop_words=False,
