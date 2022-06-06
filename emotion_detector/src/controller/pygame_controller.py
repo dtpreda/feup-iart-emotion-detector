@@ -13,7 +13,7 @@ from classifiers.generative import multi_layer_perceptron_fit, random_forest_fit
 from classifiers.discriminative import gaussian_naive_bayes_fit, gaussian_naive_bayes_predict, multinomial_naive_bayes_fit, multinomial_naive_bayes_predict
 
 from view.main_view import MainView
-from helpers.utils import removeEmptyLines
+from helpers.utils import remove_empty_lines
 
 WINDOW_SIZE = (1300, 800)
 FPS = 30
@@ -48,6 +48,10 @@ class PygameController:
         self.emotion = ""
         self.train_accuracy = ""
         self.test_accuracy = ""
+        self.train_precision = ""
+        self.test_precision = ""
+        self.train_recall = ""
+        self.test_recall = ""
         self.duration = ""
 
     def pygame_loop(self) -> None:
@@ -59,7 +63,10 @@ class PygameController:
                 break
 
             self.main_view.draw(events, self.emotion,
-                                self.train_accuracy, self.test_accuracy, self.duration)
+                                self.train_accuracy, self.test_accuracy,
+                                self.train_precision, self.test_precision,
+                                self.train_recall, self.test_recall,
+                                self.duration)
             pygame_widgets.update(events)
             pygame.display.flip()
 
@@ -71,7 +78,10 @@ class PygameController:
     def force_flip(self):
         events = pygame.event.get()
         self.main_view.draw(events, self.emotion,
-                            self.train_accuracy, self.test_accuracy, self.duration)
+                            self.train_accuracy, self.test_accuracy,
+                            self.train_precision, self.test_precision,
+                            self.train_recall, self.test_recall,
+                            self.duration)
         pygame_widgets.update(events)
         pygame.display.flip()
 
@@ -84,7 +94,7 @@ class PygameController:
             self.animate_warning("Please select the desired dataset")
             return
 
-        input = removeEmptyLines(self.textarea.get_text_as_string())
+        input = remove_empty_lines(self.textarea.get_text_as_string())
 
         self.emotion = 'analysing...'
         self.force_flip()
@@ -110,13 +120,15 @@ class PygameController:
             self.animate_warning("Please select the desired dataset")
             return
 
-        self.train_accuracy = self.test_accuracy = 'analysing...'
-        self.duration = 'analysing...'
+        self.train_accuracy = self.test_accuracy = '...'
+        self.train_precision = self.test_precision = '...'
+        self.train_recall = self.test_recall = '...'
+        self.duration = '...'
         self.force_flip()
 
         algorithms = self.get_algorithm(self.dropdowns[0].getSelected())
 
-        self.train_accuracy, self.test_accuracy, self.duration = predict_dataset(
+        self.train_accuracy, self.test_accuracy, self.train_precision, self.test_precision,                                 self.train_recall, self.test_recall, self.duration = predict_dataset(
             algorithms[0], algorithms[1],
             self.get_dataset_dir(self.dropdowns[1].getSelected()),
             self.toggles[0][1].getValue(),

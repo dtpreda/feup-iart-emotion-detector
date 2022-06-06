@@ -1,5 +1,5 @@
 from controller.pygame_controller import PygameController
-from helpers.utils import blockPrint, enablePrint
+from helpers.utils import block_print, enable_print
 
 
 class MainController:
@@ -7,7 +7,7 @@ class MainController:
         pass
 
     def main_loop(self) -> None:
-        blockPrint()
+        block_print()
         pygame_controller = PygameController()
         pygame_controller.pygame_loop()
-        enablePrint()
+        enable_print()
