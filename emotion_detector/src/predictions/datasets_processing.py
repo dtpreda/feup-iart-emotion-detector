@@ -1,6 +1,6 @@
 import pandas as pd
 from text_analysis.preprocess import tokenize
-from text_analysis.feature_extraction import tfidf_matrix
+from text_analysis.feature_extraction import tfidf_learn_vocabulary, tfidf_matrix
 from sklearn.metrics import accuracy_score
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
@@ -17,7 +17,8 @@ def process_dataset():
     statements = train_data.drop('Emotion', axis=1).values
 
     statements = [tokenize(statement[0]) for statement in statements]
-    processed_statements = tfidf_matrix(statements)
+    vectorizer = tfidf_learn_vocabulary(statements)
+    processed_statements = tfidf_matrix(vectorizer, statements)
 
     x_train, x_test, y_train, y_test = train_test_split(
         processed_statements, emotions, test_size=0.2, random_state=0)
@@ -33,10 +34,12 @@ def process_dataset():
 
     test_statements = [tokenize(statement[0])
                        for statement in test_statements]
-    processed_test_statements = tfidf_matrix(test_statements)
+    processed_test_statements = tfidf_matrix(vectorizer, test_statements)
 
     test_predictions = multi_layer_perceptron_predict(
         x_train, y_train, processed_test_statements)
+
+    print(test_predictions[:200])
 
     print(
         f"Accuracy on the test dataset: {accuracy_score(test_emotions, test_predictions)}")
