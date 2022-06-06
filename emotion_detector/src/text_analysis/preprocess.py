@@ -2,6 +2,15 @@ import string
 import nltk
 import nltk.sentiment.util
 
+import re
+CLEAN_HTML_REGEX = re.compile('<.*?>')
+
+
+def clean_html(raw_html):
+    clean_text = re.sub(CLEAN_HTML_REGEX, '', raw_html)
+    return clean_text
+
+
 nltk.download('stopwords', quiet=True)
 nltk.download('wordnet', quiet=True)
 nltk.download('omw-1.4', quiet=True)
@@ -11,6 +20,7 @@ nltk.download('vader_lexicon', quiet=True)
 def tokenize(statement: str, language: str = "english", *, rm_stop_words=False,
              lowercase=False, lemmatize=False, rm_single_chars=False, with_bigram=False, with_pos_tag=False):
     # Use TweetTokenizer to tokenize while preserving hashtags
+    statement = clean_html(statement)
     tt = nltk.tokenize.TweetTokenizer(strip_handles=True,
                                       reduce_len=True, match_phone_numbers=True)
 
