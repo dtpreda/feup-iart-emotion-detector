@@ -8,36 +8,41 @@ nltk.download('omw-1.4', quiet=True)
 nltk.download('vader_lexicon', quiet=True)
 
 
-def tokenize(statement: str, language: str = "english"):
+def tokenize(statement: str, language: str = "english", *, rm_stop_words=False,
+             lowercase=False, lemmatize=False, rm_single_chars=False, with_bigram=False, with_pos_tag=False):
     # Use TweetTokenizer to tokenize while preserving hashtags
     tt = nltk.tokenize.TweetTokenizer(strip_handles=True,
                                       reduce_len=True, match_phone_numbers=True)
+
     punctuation = list(string.punctuation)
     punctuation.remove('#')
     stop = nltk.corpus.stopwords.words(language) + punctuation
     tokens = tt.tokenize(statement)
 
-    # Remove stop words and lowercase and lemmatize
-    lemmatizer = nltk.WordNetLemmatizer()
-    tokens = [lemmatizer.lemmatize(t.lower())
-              for t in tokens if t.lower() not in stop]
+    if rm_stop_words:
+        tokens = [t for t in tokens if t not in stop]
 
-    # Filter single character words
-    tokens = list(filter(lambda x: len(x) > 1, tokens))
+    if lowercase:
+        tokens = [t.lower() for t in tokens]
+
+    if lemmatize:
+        lemmatizer = nltk.WordNetLemmatizer()
+        tokens = [lemmatizer.lemmatize(t) for t in tokens]
+
+    if rm_single_chars:
+        tokens = list(filter(lambda x: len(x) > 1, tokens))
+
+    if with_pos_tag:
+        tokens = pos_tag(tokens)
+
+    if with_bigram:
+        tokens = bigram(tokens)
 
     return tokens
 
 
 def bigram(tokenized_sentence: list[str]):
     return list(nltk.bigrams(tokenized_sentence))
-
-
-def trigram(tokenized_sentence: list[str]):
-    return list(nltk.trigrams(tokenized_sentence))
-
-
-def mark_negation(tokenized_sentence: list[str]):
-    return nltk.sentiment.util.mark_negation(tokenized_sentence)
 
 
 def pos_tag(tokenized_sentence: list[str]):

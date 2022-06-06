@@ -1,6 +1,10 @@
 import pygame
 
 BG_COLOR = (252, 252, 220)
+FONT_TITLE_SIZE = 50
+FONT_SUBTITLE_SIZE = 35
+FONT_TEXT_SIZE = 25
+TEXT_COLOR = (20, 20, 20)
 
 
 class MainView:
@@ -9,7 +13,7 @@ class MainView:
         self.window_size = window_size
         self.textarea = textarea
 
-    def draw(self, events):
+    def draw(self, events, emotion):
         pressed_keys = pygame.key.get_pressed()
         mouse_x, mouse_y = pygame.mouse.get_pos()
         mouse_pressed = pygame.mouse.get_pressed()
@@ -18,3 +22,30 @@ class MainView:
 
         self.textarea.display_editor(
             events, pressed_keys, mouse_x, mouse_y, mouse_pressed)
+
+        pygame.draw.line(self.window, (150, 150, 150),
+                         (50, 550), (650, 550), 4)
+
+        self.draw_infos(emotion)
+
+    def draw_infos(self, emotion):
+        font = pygame.font.SysFont(None, FONT_TEXT_SIZE)
+        img = font.render("Emotion: " + emotion, True, TEXT_COLOR)
+        self.window.blit(
+            img, (400, 480))
+
+        font = pygame.font.SysFont(None, FONT_TEXT_SIZE)
+        img = font.render("Text Input", True, TEXT_COLOR)
+        self.window.blit(
+            img, (50, 250))
+
+        font = pygame.font.SysFont(None, FONT_TITLE_SIZE)
+        img = font.render("Natural Language Processing", True, TEXT_COLOR)
+        self.window.blit(
+            img, ((self.window_size[0] - img.get_size()[0]) / 2, 40))
+
+        font = pygame.font.SysFont(None, FONT_SUBTITLE_SIZE)
+        img = font.render(
+            "Detection of emotions in small texts", True, TEXT_COLOR)
+        self.window.blit(
+            img, ((self.window_size[0] - img.get_size()[0]) / 2, 100))

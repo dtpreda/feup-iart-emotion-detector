@@ -2,7 +2,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 
 
 def tfidf_matrix(tokenized_sentences: list[list[str]]):
-    vectorizer = TfidfVectorizer(max_features=1000, analyzer='word',
+    vectorizer = TfidfVectorizer(max_features=1, analyzer='word',
                                  tokenizer=lambda x: x, preprocessor=lambda x: x, token_pattern=None)
     return vectorizer.fit_transform(tokenized_sentences).toarray()
 
