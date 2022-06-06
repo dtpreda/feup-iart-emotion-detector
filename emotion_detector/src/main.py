@@ -8,9 +8,10 @@ from classifiers.discriminative import gaussian_naive_bayes_predict, multinomial
 from text_analysis.feature_extraction import tfidf_matrix
 from text_analysis.preprocess import tokenize
 
-train_data = pd.read_csv("emotion_detector/asset/dataset/emotions.csv")
+train_data = pd.read_csv(
+    "emotion_detector/dataset/imdb/train.csv", encoding="cp1252")
 test_data = pd.read_csv(
-    "emotion_detector/asset/dataset/testing_data.csv", encoding="cp1252")
+    "emotion_detector/dataset/imdb/test.csv", encoding="cp1252")
 
 emotions = train_data.Emotion.values
 statements = train_data.drop('Emotion', axis=1).values
