@@ -12,6 +12,10 @@ previous_predict_algorithm = None
 
 def predict_text_emotion(data, fit_algorithm, predict_algorithm, dataset_dir, rm_stop_words,
                          lowercase, lemmatize, rm_single_chars, with_bigram, with_pos_tag):
+    """
+    Trains a model with a dataset and then predicts the underlying emotion of the given statement.
+    If the desired model was already train, just predicts the emotion for the statemnt.
+    """
     train_data = pd.read_csv(dataset_dir + "train.csv")
 
     emotions = train_data.Emotion.values

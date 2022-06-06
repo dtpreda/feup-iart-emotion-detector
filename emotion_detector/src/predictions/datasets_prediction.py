@@ -9,6 +9,11 @@ from sklearn.model_selection import train_test_split
 
 def predict_dataset(fit_algorithm, predict_algorithm, dataset_dir, rm_stop_words,
                     lowercase, lemmatize, rm_single_chars, with_bigram, with_pos_tag):
+    """
+    Predicts the emotion label data for a given set of statements.
+    Begins by tokenizing, taking into account the flags sent via parameter.
+    Afterwards, trains a model with fit_algorithm and then predicts with predict_algorithm.
+    """
 
     start = time()
 
