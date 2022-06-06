@@ -9,12 +9,21 @@ TEXT_COLOR = (20, 20, 20)
 
 class MainView:
     def __init__(self, window, textarea, window_size) -> None:
+        """
+        Constructor of MainView class
+        Properties:
+            window (Surface): pygame window for display
+            window_size (tuple): tuple with width and height of pygame window
+            textarea (TextEditor): textarea where user input text
+        """
         self.window = window
         self.window_size = window_size
         self.textarea = textarea
 
     def draw(self, events, emotion, train_accuracy, train_precision, train_recall,
              test_accuracy, test_precision, test_recall, duration, matrix):
+        '''Draw background, text input area and all information in pygame window'''
+
         pressed_keys = pygame.key.get_pressed()
         mouse_x, mouse_y = pygame.mouse.get_pos()
         mouse_pressed = pygame.mouse.get_pressed()
@@ -35,6 +44,7 @@ class MainView:
 
     def draw_infos(self, emotion, train_accuracy, train_precision, train_recall,
                    test_accuracy, test_precision, test_recall, duration, matrix):
+        '''Draw all information needed in pygame window'''
         text_font = pygame.font.SysFont(None, FONT_TEXT_SIZE)
         img = text_font.render('Duration: ' +
                                str(duration) + ' seconds', True, TEXT_COLOR)
@@ -84,6 +94,7 @@ class MainView:
             img, ((self.window_size[0] - img.get_size()[0]) / 2, 100))
 
     def draw_matrix(self, matrix):
+        '''Draw confusion matrix in pygame window'''
         x = 575
         y = 520
         font = pygame.font.SysFont(None, FONT_TEXT_SIZE)
