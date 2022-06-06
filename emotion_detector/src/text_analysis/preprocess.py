@@ -26,21 +26,21 @@ def tokenize(statement: str, language: str = "english", *, rm_stop_words=False,
 
     punctuation = list(string.punctuation)
     punctuation.remove('#')
-    stop = nltk.corpus.stopwords.words(language) + punctuation
     tokens = tt.tokenize(statement)
-
-    if rm_stop_words:
-        tokens = [t for t in tokens if t not in stop]
 
     if lowercase:
         tokens = [t.lower() for t in tokens]
 
+    if rm_single_chars:
+        tokens = list(filter(lambda x: len(x) > 1, tokens))
+
+    if rm_stop_words:
+        stop = nltk.corpus.stopwords.words(language) + punctuation
+        tokens = [t for t in tokens if t not in stop]
+
     if do_lemmatize:
         lemmatizer = nltk.WordNetLemmatizer()
         tokens = [lemmatizer.lemmatize(t) for t in tokens]
-
-    if rm_single_chars:
-        tokens = list(filter(lambda x: len(x) > 1, tokens))
 
     if with_pos_tag:
         tokens = pos_tag(tokens)

@@ -34,7 +34,7 @@ class MainView:
     def draw_infos(self, emotion, train_accuracy, test_accuracy, duration):
         font = pygame.font.SysFont(None, FONT_TEXT_SIZE)
         img = font.render('Duration: ' +
-                          str(duration), True, TEXT_COLOR)
+                          str(duration) + (' seconds' if duration != '' and duration != 'analysing...' else ''), True, TEXT_COLOR)
         self.window.blit(
             img, (50, 730))
 

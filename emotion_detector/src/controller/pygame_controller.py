@@ -9,8 +9,8 @@ from pygame_widgets.toggle import Toggle
 from predictions.text_prediction import predict_text_emotion
 from predictions.datasets_prediction import predict_dataset
 
-from classifiers.generative import random_forest_predict, multi_layer_perceptron_predict
-from classifiers.discriminative import gaussian_naive_bayes_predict, multinomial_naive_bayes_predict
+from classifiers.generative import multi_layer_perceptron_fit, random_forest_fit, random_forest_predict, multi_layer_perceptron_predict
+from classifiers.discriminative import gaussian_naive_bayes_fit, gaussian_naive_bayes_predict, multinomial_naive_bayes_fit, multinomial_naive_bayes_predict
 
 from view.main_view import MainView
 from helpers.utils import removeEmptyLines
@@ -89,8 +89,10 @@ class PygameController:
         self.emotion = 'analysing...'
         self.force_flip()
 
+        algorithms = self.get_algorithm(self.dropdowns[0].getSelected())
+
         self.emotion = predict_text_emotion(
-            input, self.get_algorithm(self.dropdowns[0].getSelected()),
+            input, algorithms[0], algorithms[1],
             self.get_dataset_dir(self.dropdowns[1].getSelected()),
             self.toggles[0][1].getValue(),
             self.toggles[1][1].getValue(),
@@ -112,8 +114,10 @@ class PygameController:
         self.duration = 'analysing...'
         self.force_flip()
 
+        algorithms = self.get_algorithm(self.dropdowns[0].getSelected())
+
         self.train_accuracy, self.test_accuracy, self.duration = predict_dataset(
-            self.get_algorithm(self.dropdowns[0].getSelected()),
+            algorithms[0], algorithms[1],
             self.get_dataset_dir(self.dropdowns[1].getSelected()),
             self.toggles[0][1].getValue(),
             self.toggles[1][1].getValue(),
@@ -281,13 +285,13 @@ class PygameController:
 
     def get_algorithm(self, value):
         if (value == 0):
-            return gaussian_naive_bayes_predict
+            return (gaussian_naive_bayes_fit, gaussian_naive_bayes_predict)
         if (value == 1):
-            return multinomial_naive_bayes_predict
+            return (multinomial_naive_bayes_fit, multinomial_naive_bayes_predict)
         if (value == 2):
-            return random_forest_predict
+            return (random_forest_fit, random_forest_predict)
         if (value == 3):
-            return multi_layer_perceptron_predict
+            return (multi_layer_perceptron_fit, multi_layer_perceptron_predict)
 
     def get_dataset_dir(self, value):
         if (value == 0):

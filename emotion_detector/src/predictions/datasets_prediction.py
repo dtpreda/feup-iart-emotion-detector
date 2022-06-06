@@ -3,13 +3,10 @@ import pandas as pd
 from text_analysis.preprocess import tokenize
 from text_analysis.feature_extraction import tfidf_learn_vocabulary, tfidf_matrix
 from sklearn.metrics import accuracy_score
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
-from classifiers.generative import random_forest_predict, multi_layer_perceptron_predict
-from classifiers.discriminative import gaussian_naive_bayes_predict, multinomial_naive_bayes_predict
 
 
-def predict_dataset(algorithm, dataset_dir, rm_stop_words,
+def predict_dataset(fit_algorithm, predict_algorithm, dataset_dir, rm_stop_words,
                     lowercase, lemmatize, rm_single_chars, with_bigram, with_pos_tag):
 
     start = time()
@@ -28,11 +25,9 @@ def predict_dataset(algorithm, dataset_dir, rm_stop_words,
     x_train, x_test, y_train, y_test = train_test_split(
         processed_statements, emotions, test_size=0.2, random_state=0)
 
-    train_predictions = algorithm(
-        x_train, y_train, x_test)
+    fit_algorithm(x_train, y_train)
 
-    # print(
-    #    f"Accuracy on 20% of the train dataset: {accuracy_score(y_test, train_predictions)}")
+    train_predictions = predict_algorithm(x_test)
 
     test_emotions = test_data.Emotion.values
     test_statements = test_data.drop('Emotion', axis=1).values
@@ -42,10 +37,6 @@ def predict_dataset(algorithm, dataset_dir, rm_stop_words,
                        for statement in test_statements]
     processed_test_statements = tfidf_matrix(vectorizer, test_statements)
 
-    test_predictions = algorithm(
-        x_train, y_train, processed_test_statements)
+    test_predictions = predict_algorithm(processed_test_statements)
 
-    # print(
-    #    f"Accuracy on the test dataset: {accuracy_score(test_emotions, test_predictions)}")
-
-    return (accuracy_score(y_test, train_predictions), accuracy_score(test_emotions, test_predictions), str(time() - start))
+    return (round(accuracy_score(y_test, train_predictions), 3), round(accuracy_score(test_emotions, test_predictions), 3), str(round(time() - start, 3)))
