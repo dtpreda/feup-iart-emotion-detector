@@ -8,10 +8,10 @@ from classifiers.generative import random_forest_predict, multi_layer_perceptron
 from classifiers.discriminative import gaussian_naive_bayes_predict, multinomial_naive_bayes_predict
 
 
-def predict_dataset(algorithm):
-    train_data = pd.read_csv("emotion_detector/asset/dataset/emotions.csv")
-    test_data = pd.read_csv(
-        "emotion_detector/asset/dataset/testing_data.csv", encoding="cp1252")
+def predict_dataset(algorithm, dataset_dir):
+
+    train_data = pd.read_csv(dataset_dir + "train.csv")
+    test_data = pd.read_csv(dataset_dir + "test.csv", encoding="cp1252")
 
     emotions = train_data.Emotion.values
     statements = train_data.drop('Emotion', axis=1).values

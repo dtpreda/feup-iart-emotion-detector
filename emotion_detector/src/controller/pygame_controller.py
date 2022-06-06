@@ -67,6 +67,13 @@ class PygameController:
 
         self.quit_pygame()
 
+    def force_flip(self):
+        events = pygame.event.get()
+        self.main_view.draw(events, self.emotion,
+                            self.train_accuracy, self.test_accuracy)
+        pygame_widgets.update(events)
+        pygame.display.flip()
+
     def evaluate_text(self):
         if self.dropdowns[0].getSelected() == None:
             self.animate_warning("Please select the desired algorithm")
@@ -79,11 +86,7 @@ class PygameController:
         input = removeEmptyLines(self.textarea.get_text_as_string())
 
         self.emotion = 'Analysing'
-        events = pygame.event.get()
-        self.main_view.draw(events, self.emotion,
-                            self.train_accuracy, self.test_accuracy)
-        pygame_widgets.update(events)
-        pygame.display.flip()
+        self.force_flip()
 
         self.emotion = predict_text_emotion(input, random_forest_predict)
 
@@ -104,15 +107,15 @@ class PygameController:
             self.animate_warning("Please select the desired algorithm")
             return
 
+        if self.dropdowns[1].getSelected() == None:
+            self.animate_warning("Please select the desired dataset")
+            return
+
         self.train_accuracy = self.test_accuracy = 'Analysing'
-        events = pygame.event.get()
-        self.main_view.draw(events, self.emotion,
-                            self.train_accuracy, self.test_accuracy)
-        pygame_widgets.update(events)
-        pygame.display.flip()
+        self.force_flip()
 
         self.train_accuracy, self.test_accuracy = predict_dataset(
-            random_forest_predict)
+            self.get_algorithm(self.dropdowns[0].getSelected()), self.get_dataset_dir(self.dropdowns[1].getSelected()))
 
     def is_running(self, events) -> bool:
         """
@@ -271,3 +274,21 @@ class PygameController:
         self.animation.show()
         sleep(2)
         self.animation.hide()
+
+    def get_algorithm(self, value):
+        if (value == 0):
+            return gaussian_naive_bayes_predict
+        if (value == 1):
+            return multinomial_naive_bayes_predict
+        if (value == 2):
+            return random_forest_predict
+        if (value == 3):
+            return multi_layer_perceptron_predict
+
+    def get_dataset_dir(self, value):
+        if (value == 0):
+            return "emotion_detector/dataset/twitter/"
+        if (value == 1):
+            return "emotion_detector/dataset/twitter2/"
+        if (value == 2):
+            return "emotion_detector/dataset/imdb/"
