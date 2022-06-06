@@ -7,7 +7,7 @@ class MainController:
         pass
 
     def main_loop(self) -> None:
-        # blockPrint()
+        blockPrint()
         pygame_controller = PygameController()
         pygame_controller.pygame_loop()
-        # enablePrint()
+        enablePrint()
